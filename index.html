@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="nl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>API Dashboard</title>
+		<link type="text/css" href="API.css" rel="stylesheet" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+		<link href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css" rel="stylesheet">
+		<script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"></script>
+
+	</head>
+	<body >
+		<h1 id="title">Landing Destination</h1>
+		<div class="section" id="map">
+			
+		</div>
+		<div class="section" id="info">
+			<h3> Find the ideal landing destination </h3>
+
+			<div class="input">
+				<input type="text" class="input_text" placeholder="Enter a landing destination">
+				<input type="submit" value="Check" class="submit">
+			</div>
+			<div class="display">
+				<h1 class="name" id="name"></h1>
+				<h3 class="clear"></h3>
+				<p class="desc"></p>
+				<p class="temp"></p>
+				<p class="wind"></p>
+				<p class="degree"></p>
+				<p class="pressure"></p>
+				
+			</div>
+
+		</div>
+		<script type="text/javascript">
+						mapboxgl.accessToken = 'pk.eyJ1Ijoid291dGJla2tlciIsImEiOiJjbDEyZms4bXEyaTVuM2NrYnR3eGVudGVoIn0.7RFYdol5KCg76lJKxb3G1g';
+			const map = new mapboxgl.Map({
+			container: 'map', // container ID
+			style: 'mapbox://styles/mapbox/streets-v11', // style URL
+			center: [1.440497, 51.025538], // starting position [lng, lat]
+			zoom: 5 // starting zoom
+			});
+
+			const popup1 = new mapboxgl.Popup({ offset: 25}).setText(
+				'London');
+
+			const marker1 = new mapboxgl.Marker({
+				color: "#bd1919"
+			})
+			.setLngLat([-0.3824602, 51.5287336])
+			.setPopup(popup1)
+			.addTo(map);
+
+
+			const popup2 = new mapboxgl.Popup({ offset: 25}).setText(
+				'Paris');
+
+			const marker2 = new mapboxgl.Marker({
+				color: "#bd1919"
+			})
+			.setLngLat([2.2066097,48.8589955])
+			.setPopup(popup2)
+			.addTo(map);
+
+
+			const popup3 = new mapboxgl.Popup({ offset: 25}).setText(
+				'Amsterdam');
+
+			const marker3 = new mapboxgl.Marker({
+				color: "#bd1919"
+			})
+			.setLngLat([4.6230992, 52.3547522])
+			.setPopup(popup3)
+			.addTo(map);
+
+			var input = document.querySelector('.input_text');
+			var main = document.querySelector('#name');
+			var temp = document.querySelector('.temp');
+			var desc = document.querySelector('.desc');
+			var wind = document.querySelector('.wind');
+			var degree = document.querySelector('.degree');
+			var pressure = document.querySelector('.pressure');
+			var clear = document.querySelector('.clear')
+			var button= document.querySelector('.submit');
+
+
+			button.addEventListener('click', function(){
+			fetch('https://api.openweathermap.org/data/2.5/weather?q='+input.value+'&appid=c1241f476f2fed9db6b38328e84a1118')
+			.then(response => response.json())
+			.then(data => {
+			  var tempValue = data['main']['temp'];
+			  var nameValue = data['name'];
+			  var descValue = data['weather'][0]['description'];
+			  var windValue = data['wind']['speed'];
+			  var degreeValue = data['wind']['deg'];
+			  var pressureValue = data['main']['pressure'];
+
+			  main.innerHTML = nameValue;
+			  desc.innerHTML = "Currently: "+ descValue;
+			  temp.innerHTML = "Temperature: "+ (tempValue-273.15) +" &#8451";
+			  wind.innerHTML = "Wind speed: "+ windValue + " m/s";
+			  degree.innerHTML= "Wind degree: "+ degreeValue + " degrees"
+			  pressure.innerHTML = "Air Pressure: " + pressureValue + " hectopascal"
+			  input.value ="";
+
+			if(windValue < 5 ){
+				clear.innerHTML = "Ideal for landing"
+			}
+			else{
+				clear.innerHTML = "Not ideal for landing"
+			}
+			})
+
+			.catch(err => alert("Wrong city name!"));
+			})
+
+
+
+		</script>
+	</body>
+</html>
